@@ -136,6 +136,43 @@
       text-transform: uppercase;
     }
 
+    .select-wrapper {
+      position: relative;
+    }
+
+    .select-input {
+      width: 100%;
+      padding: 10px 32px 10px 12px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background: var(--bg);
+      font-family: inherit;
+      font-size: 13px;
+      color: var(--text-primary);
+      cursor: pointer;
+      appearance: none;
+      transition: border-color 0.15s ease;
+    }
+
+    .select-input:focus {
+      outline: none;
+      border-color: var(--text-muted);
+    }
+
+    .select-wrapper::after {
+      content: '';
+      position: absolute;
+      right: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 0;
+      height: 0;
+      border-left: 4px solid transparent;
+      border-right: 4px solid transparent;
+      border-top: 5px solid var(--text-muted);
+      pointer-events: none;
+    }
+
     .btn {
       width: 100%;
       padding: 12px 16px;
@@ -349,6 +386,19 @@
           </div>
         </div>
 
+        <div class="input-group">
+          <label class="input-label">Color System</label>
+          <div class="select-wrapper">
+            <select id="colorSystem" class="select-input">
+              <option value="mytomorrows">myTomorrows Client Landing Pages - 2026</option>
+              <option value="tailwind">Tailwind CSS</option>
+              <option value="material">Material Design 3</option>
+              <option value="shadcn">shadcn/ui</option>
+              <option value="linear">Linear App</option>
+            </select>
+          </div>
+        </div>
+
         <div class="btn-group">
           <button type="button" class="btn btn-primary" onclick="generatePalette()">
             Generate Palette
@@ -420,83 +470,200 @@
       });
     }
 
+    // Color system definitions
+    function getColorSystem(systemId, primary, secondary) {
+      const WHITE = '#FFFFFF';
+      const BLACK = '#000000';
+
+      const systems = {
+        // myTomorrows Client Landing Pages - 2026
+        mytomorrows: {
+          colors: {
+            'color-primary': { value: primary, formula: 'Base primary' },
+            'color-secondary': { value: secondary, formula: 'Base secondary' },
+            'color-primary-50': { value: mixColors(primary, WHITE, 0.05), formula: '5% primary + 95% white' },
+            'color-primary-100': { value: mixColors(primary, WHITE, 0.10), formula: '10% primary + 90% white' },
+            'color-primary-200': { value: mixColors(primary, WHITE, 0.20), formula: '20% primary + 80% white' },
+            'color-primary-600': { value: mixColors(primary, BLACK, 0.90), formula: '90% primary + 10% black' },
+            'color-primary-700': { value: mixColors(primary, BLACK, 0.80), formula: '80% primary + 20% black' },
+            'color-primary-800': { value: mixColors(primary, BLACK, 0.70), formula: '70% primary + 30% black' },
+            'color-primary-900': { value: mixColors(primary, BLACK, 0.50), formula: '50% primary + 50% black' },
+            'color-primary-950': { value: mixColors(primary, BLACK, 0.15), formula: '15% primary + 85% black' },
+            'color-secondary-50': { value: mixColors(secondary, WHITE, 0.05), formula: '5% secondary + 95% white' },
+            'color-secondary-100': { value: mixColors(secondary, WHITE, 0.10), formula: '10% secondary + 90% white' },
+            'color-secondary-600': { value: mixColors(secondary, BLACK, 0.90), formula: '90% secondary + 10% black' },
+            'color-secondary-700': { value: mixColors(secondary, BLACK, 0.80), formula: '80% secondary + 20% black' },
+            'color-text': { value: mixColors(primary, '#1a1a1a', 0.08), formula: '8% primary + 92% #1a1a1a' },
+            'color-text-75': { value: mixColors(mixColors(primary, '#1a1a1a', 0.08), WHITE, 0.75), formula: '75% text + 25% white' },
+            'color-text-secondary': { value: mixColors(primary, '#666666', 0.06), formula: '6% primary + 94% #666666' },
+            'color-text-muted': { value: mixColors(primary, '#999999', 0.04), formula: '4% primary + 96% #999999' },
+            'color-background': { value: '#FFFFFF', formula: 'Static white' },
+            'color-surface': { value: mixColors(primary, WHITE, 0.05), formula: 'Same as primary-50' },
+            'bg-grey-lighter': { value: mixColors(primary, WHITE, 0.02), formula: '2% primary + 98% white' },
+            'bg-grey-light': { value: mixColors(primary, WHITE, 0.04), formula: '4% primary + 96% white' },
+            'color-border': { value: mixColors(primary, WHITE, 0.20), formula: 'Same as primary-200' },
+            'color-border-light': { value: mixColors(primary, WHITE, 0.10), formula: 'Same as primary-100' },
+            'color-btn-primary-bg': { value: primary, formula: 'Primary color' },
+            'color-btn-primary-text': { value: '#FFFFFF', formula: 'White' },
+            'color-btn-primary-hover': { value: mixColors(primary, BLACK, 0.80), formula: 'Same as primary-700' },
+            'color-btn-secondary-bg': { value: secondary, formula: 'Secondary color' },
+            'color-btn-secondary-text': { value: '#FFFFFF', formula: 'White' },
+            'color-btn-secondary-hover': { value: mixColors(secondary, BLACK, 0.80), formula: 'Same as secondary-700' },
+          },
+          groups: {
+            'Base Colors': ['color-primary', 'color-secondary'],
+            'Primary Shades': ['color-primary-50', 'color-primary-100', 'color-primary-200', 'color-primary-600', 'color-primary-700', 'color-primary-800', 'color-primary-900', 'color-primary-950'],
+            'Secondary Shades': ['color-secondary-50', 'color-secondary-100', 'color-secondary-600', 'color-secondary-700'],
+            'Text Colors': ['color-text', 'color-text-75', 'color-text-secondary', 'color-text-muted'],
+            'Background Colors': ['color-background', 'color-surface', 'bg-grey-lighter', 'bg-grey-light'],
+            'Border Colors': ['color-border', 'color-border-light'],
+            'Button Colors': ['color-btn-primary-bg', 'color-btn-primary-text', 'color-btn-primary-hover', 'color-btn-secondary-bg', 'color-btn-secondary-text', 'color-btn-secondary-hover'],
+          }
+        },
+
+        // Tailwind CSS
+        tailwind: {
+          colors: {
+            'primary-50': { value: mixColors(primary, WHITE, 0.05), formula: '5% primary + 95% white' },
+            'primary-100': { value: mixColors(primary, WHITE, 0.10), formula: '10% primary + 90% white' },
+            'primary-200': { value: mixColors(primary, WHITE, 0.20), formula: '20% primary + 80% white' },
+            'primary-300': { value: mixColors(primary, WHITE, 0.35), formula: '35% primary + 65% white' },
+            'primary-400': { value: mixColors(primary, WHITE, 0.50), formula: '50% primary + 50% white' },
+            'primary-500': { value: primary, formula: 'Base primary' },
+            'primary-600': { value: mixColors(primary, BLACK, 0.85), formula: '85% primary + 15% black' },
+            'primary-700': { value: mixColors(primary, BLACK, 0.70), formula: '70% primary + 30% black' },
+            'primary-800': { value: mixColors(primary, BLACK, 0.55), formula: '55% primary + 45% black' },
+            'primary-900': { value: mixColors(primary, BLACK, 0.40), formula: '40% primary + 60% black' },
+            'primary-950': { value: mixColors(primary, BLACK, 0.25), formula: '25% primary + 75% black' },
+            'secondary-50': { value: mixColors(secondary, WHITE, 0.05), formula: '5% secondary + 95% white' },
+            'secondary-100': { value: mixColors(secondary, WHITE, 0.10), formula: '10% secondary + 90% white' },
+            'secondary-200': { value: mixColors(secondary, WHITE, 0.20), formula: '20% secondary + 80% white' },
+            'secondary-300': { value: mixColors(secondary, WHITE, 0.35), formula: '35% secondary + 65% white' },
+            'secondary-400': { value: mixColors(secondary, WHITE, 0.50), formula: '50% secondary + 50% white' },
+            'secondary-500': { value: secondary, formula: 'Base secondary' },
+            'secondary-600': { value: mixColors(secondary, BLACK, 0.85), formula: '85% secondary + 15% black' },
+            'secondary-700': { value: mixColors(secondary, BLACK, 0.70), formula: '70% secondary + 30% black' },
+            'secondary-800': { value: mixColors(secondary, BLACK, 0.55), formula: '55% secondary + 45% black' },
+            'secondary-900': { value: mixColors(secondary, BLACK, 0.40), formula: '40% secondary + 60% black' },
+            'secondary-950': { value: mixColors(secondary, BLACK, 0.25), formula: '25% secondary + 75% black' },
+          },
+          groups: {
+            'Primary': ['primary-50', 'primary-100', 'primary-200', 'primary-300', 'primary-400', 'primary-500', 'primary-600', 'primary-700', 'primary-800', 'primary-900', 'primary-950'],
+            'Secondary': ['secondary-50', 'secondary-100', 'secondary-200', 'secondary-300', 'secondary-400', 'secondary-500', 'secondary-600', 'secondary-700', 'secondary-800', 'secondary-900', 'secondary-950'],
+          }
+        },
+
+        // Material Design 3
+        material: {
+          colors: {
+            'md-primary': { value: primary, formula: 'Primary color' },
+            'md-on-primary': { value: WHITE, formula: 'White' },
+            'md-primary-container': { value: mixColors(primary, WHITE, 0.15), formula: '15% primary + 85% white' },
+            'md-on-primary-container': { value: mixColors(primary, BLACK, 0.30), formula: '30% primary + 70% black' },
+            'md-secondary': { value: secondary, formula: 'Secondary color' },
+            'md-on-secondary': { value: WHITE, formula: 'White' },
+            'md-secondary-container': { value: mixColors(secondary, WHITE, 0.15), formula: '15% secondary + 85% white' },
+            'md-on-secondary-container': { value: mixColors(secondary, BLACK, 0.30), formula: '30% secondary + 70% black' },
+            'md-surface': { value: mixColors(primary, WHITE, 0.02), formula: '2% primary + 98% white' },
+            'md-surface-dim': { value: mixColors(primary, WHITE, 0.06), formula: '6% primary + 94% white' },
+            'md-surface-bright': { value: mixColors(primary, WHITE, 0.01), formula: '1% primary + 99% white' },
+            'md-surface-container-lowest': { value: WHITE, formula: 'White' },
+            'md-surface-container-low': { value: mixColors(primary, WHITE, 0.03), formula: '3% primary + 97% white' },
+            'md-surface-container': { value: mixColors(primary, WHITE, 0.05), formula: '5% primary + 95% white' },
+            'md-surface-container-high': { value: mixColors(primary, WHITE, 0.08), formula: '8% primary + 92% white' },
+            'md-surface-container-highest': { value: mixColors(primary, WHITE, 0.12), formula: '12% primary + 88% white' },
+            'md-on-surface': { value: mixColors(primary, '#1a1a1a', 0.05), formula: '5% primary + 95% #1a1a1a' },
+            'md-on-surface-variant': { value: mixColors(primary, '#555555', 0.08), formula: '8% primary + 92% #555' },
+            'md-outline': { value: mixColors(primary, '#888888', 0.10), formula: '10% primary + 90% #888' },
+            'md-outline-variant': { value: mixColors(primary, '#cccccc', 0.08), formula: '8% primary + 92% #ccc' },
+          },
+          groups: {
+            'Primary': ['md-primary', 'md-on-primary', 'md-primary-container', 'md-on-primary-container'],
+            'Secondary': ['md-secondary', 'md-on-secondary', 'md-secondary-container', 'md-on-secondary-container'],
+            'Surface': ['md-surface', 'md-surface-dim', 'md-surface-bright', 'md-surface-container-lowest', 'md-surface-container-low', 'md-surface-container', 'md-surface-container-high', 'md-surface-container-highest'],
+            'Content': ['md-on-surface', 'md-on-surface-variant', 'md-outline', 'md-outline-variant'],
+          }
+        },
+
+        // shadcn/ui
+        shadcn: {
+          colors: {
+            'background': { value: WHITE, formula: 'White background' },
+            'foreground': { value: mixColors(primary, '#0a0a0a', 0.05), formula: '5% primary + 95% near-black' },
+            'card': { value: WHITE, formula: 'White' },
+            'card-foreground': { value: mixColors(primary, '#0a0a0a', 0.05), formula: '5% primary + 95% near-black' },
+            'popover': { value: WHITE, formula: 'White' },
+            'popover-foreground': { value: mixColors(primary, '#0a0a0a', 0.05), formula: '5% primary + 95% near-black' },
+            'primary': { value: primary, formula: 'Primary color' },
+            'primary-foreground': { value: WHITE, formula: 'White' },
+            'secondary': { value: mixColors(primary, '#f5f5f5', 0.05), formula: '5% primary + 95% #f5f5f5' },
+            'secondary-foreground': { value: mixColors(primary, '#171717', 0.05), formula: '5% primary + 95% #171717' },
+            'muted': { value: mixColors(primary, '#f5f5f5', 0.03), formula: '3% primary + 97% #f5f5f5' },
+            'muted-foreground': { value: mixColors(primary, '#737373', 0.05), formula: '5% primary + 95% #737373' },
+            'accent': { value: secondary, formula: 'Secondary as accent' },
+            'accent-foreground': { value: WHITE, formula: 'White' },
+            'destructive': { value: '#ef4444', formula: 'Red for destructive' },
+            'destructive-foreground': { value: WHITE, formula: 'White' },
+            'border': { value: mixColors(primary, '#e5e5e5', 0.05), formula: '5% primary + 95% #e5e5e5' },
+            'input': { value: mixColors(primary, '#e5e5e5', 0.05), formula: '5% primary + 95% #e5e5e5' },
+            'ring': { value: primary, formula: 'Primary for focus ring' },
+          },
+          groups: {
+            'Backgrounds': ['background', 'card', 'popover'],
+            'Foregrounds': ['foreground', 'card-foreground', 'popover-foreground'],
+            'Primary': ['primary', 'primary-foreground'],
+            'Secondary': ['secondary', 'secondary-foreground'],
+            'Muted': ['muted', 'muted-foreground'],
+            'Accent': ['accent', 'accent-foreground'],
+            'Destructive': ['destructive', 'destructive-foreground'],
+            'Borders & Inputs': ['border', 'input', 'ring'],
+          }
+        },
+
+        // Linear App
+        linear: {
+          colors: {
+            'accent': { value: primary, formula: 'Primary as accent' },
+            'accent-hover': { value: mixColors(primary, BLACK, 0.85), formula: '85% primary + 15% black' },
+            'accent-muted': { value: mixColors(primary, WHITE, 0.15), formula: '15% primary + 85% white' },
+            'highlight': { value: secondary, formula: 'Secondary as highlight' },
+            'highlight-hover': { value: mixColors(secondary, BLACK, 0.85), formula: '85% secondary + 15% black' },
+            'bg-base': { value: WHITE, formula: 'White base' },
+            'bg-elevated': { value: '#fafafa', formula: 'Slightly elevated' },
+            'bg-overlay': { value: mixColors(primary, WHITE, 0.02), formula: '2% primary + 98% white' },
+            'bg-subtle': { value: mixColors(primary, '#f5f5f5', 0.03), formula: '3% primary + 97% #f5f5f5' },
+            'text-primary': { value: mixColors(primary, '#0a0a0a', 0.03), formula: '3% primary + 97% near-black' },
+            'text-secondary': { value: mixColors(primary, '#6b6b6b', 0.05), formula: '5% primary + 95% #6b6b6b' },
+            'text-tertiary': { value: mixColors(primary, '#9a9a9a', 0.05), formula: '5% primary + 95% #9a9a9a' },
+            'text-disabled': { value: '#c4c4c4', formula: 'Disabled text' },
+            'border-default': { value: mixColors(primary, '#e5e5e5', 0.03), formula: '3% primary + 97% #e5e5e5' },
+            'border-subtle': { value: mixColors(primary, '#f0f0f0', 0.02), formula: '2% primary + 98% #f0f0f0' },
+            'border-strong': { value: mixColors(primary, '#d4d4d4', 0.05), formula: '5% primary + 95% #d4d4d4' },
+          },
+          groups: {
+            'Accent': ['accent', 'accent-hover', 'accent-muted'],
+            'Highlight': ['highlight', 'highlight-hover'],
+            'Backgrounds': ['bg-base', 'bg-elevated', 'bg-overlay', 'bg-subtle'],
+            'Text': ['text-primary', 'text-secondary', 'text-tertiary', 'text-disabled'],
+            'Borders': ['border-default', 'border-subtle', 'border-strong'],
+          }
+        }
+      };
+
+      return systems[systemId];
+    }
+
     // Generate palette
     function generatePalette() {
       const primary = document.getElementById('primaryHex').value.toUpperCase();
       const secondary = document.getElementById('secondaryHex').value.toUpperCase();
+      const systemId = document.getElementById('colorSystem').value;
 
       if (!isValidHex(primary) || !isValidHex(secondary)) return;
 
-      const WHITE = '#FFFFFF';
-      const BLACK = '#000000';
-
-      // Calculate all colors
-      const colors = {
-        // Base
-        'color-primary': { value: primary, formula: 'Base primary' },
-        'color-secondary': { value: secondary, formula: 'Base secondary' },
-
-        // Primary shades (light)
-        'color-primary-50': { value: mixColors(primary, WHITE, 0.05), formula: '5% primary + 95% white' },
-        'color-primary-100': { value: mixColors(primary, WHITE, 0.10), formula: '10% primary + 90% white' },
-        'color-primary-200': { value: mixColors(primary, WHITE, 0.20), formula: '20% primary + 80% white' },
-
-        // Primary shades (dark)
-        'color-primary-600': { value: mixColors(primary, BLACK, 0.90), formula: '90% primary + 10% black' },
-        'color-primary-700': { value: mixColors(primary, BLACK, 0.80), formula: '80% primary + 20% black' },
-        'color-primary-800': { value: mixColors(primary, BLACK, 0.70), formula: '70% primary + 30% black' },
-        'color-primary-900': { value: mixColors(primary, BLACK, 0.50), formula: '50% primary + 50% black' },
-        'color-primary-950': { value: mixColors(primary, BLACK, 0.15), formula: '15% primary + 85% black' },
-
-        // Secondary shades
-        'color-secondary-50': { value: mixColors(secondary, WHITE, 0.05), formula: '5% secondary + 95% white' },
-        'color-secondary-100': { value: mixColors(secondary, WHITE, 0.10), formula: '10% secondary + 90% white' },
-        'color-secondary-600': { value: mixColors(secondary, BLACK, 0.90), formula: '90% secondary + 10% black' },
-        'color-secondary-700': { value: mixColors(secondary, BLACK, 0.80), formula: '80% secondary + 20% black' },
-
-        // Text colors
-        'color-text': { value: mixColors(primary, '#1a1a1a', 0.08), formula: '8% primary + 92% #1a1a1a' },
-        'color-text-75': { value: null, formula: '75% text + 25% white' }, // Calculated after
-        'color-text-secondary': { value: mixColors(primary, '#666666', 0.06), formula: '6% primary + 94% #666666' },
-        'color-text-muted': { value: mixColors(primary, '#999999', 0.04), formula: '4% primary + 96% #999999' },
-
-        // Background colors
-        'color-background': { value: '#FFFFFF', formula: 'Static white' },
-        'color-surface': { value: null, formula: 'Same as primary-50' },
-        'bg-grey-lighter': { value: mixColors(primary, WHITE, 0.02), formula: '2% primary + 98% white' },
-        'bg-grey-light': { value: mixColors(primary, WHITE, 0.04), formula: '4% primary + 96% white' },
-
-        // Border colors
-        'color-border': { value: null, formula: 'Same as primary-200' },
-        'color-border-light': { value: null, formula: 'Same as primary-100' },
-
-        // Button colors
-        'color-btn-primary-bg': { value: primary, formula: 'Primary color' },
-        'color-btn-primary-text': { value: '#FFFFFF', formula: 'White' },
-        'color-btn-primary-hover': { value: null, formula: 'Same as primary-700' },
-        'color-btn-secondary-bg': { value: secondary, formula: 'Secondary color' },
-        'color-btn-secondary-text': { value: '#FFFFFF', formula: 'White' },
-        'color-btn-secondary-hover': { value: null, formula: 'Same as secondary-700' },
-      };
-
-      // Calculate derived values
-      colors['color-text-75'].value = mixColors(colors['color-text'].value, WHITE, 0.75);
-      colors['color-surface'].value = colors['color-primary-50'].value;
-      colors['color-border'].value = colors['color-primary-200'].value;
-      colors['color-border-light'].value = colors['color-primary-100'].value;
-      colors['color-btn-primary-hover'].value = colors['color-primary-700'].value;
-      colors['color-btn-secondary-hover'].value = colors['color-secondary-700'].value;
-
-      // Group colors by category
-      const groups = {
-        'Base Colors': ['color-primary', 'color-secondary'],
-        'Primary Shades': ['color-primary-50', 'color-primary-100', 'color-primary-200', 'color-primary-600', 'color-primary-700', 'color-primary-800', 'color-primary-900', 'color-primary-950'],
-        'Secondary Shades': ['color-secondary-50', 'color-secondary-100', 'color-secondary-600', 'color-secondary-700'],
-        'Text Colors': ['color-text', 'color-text-75', 'color-text-secondary', 'color-text-muted'],
-        'Background Colors': ['color-background', 'color-surface', 'bg-grey-lighter', 'bg-grey-light'],
-        'Border Colors': ['color-border', 'color-border-light'],
-        'Button Colors': ['color-btn-primary-bg', 'color-btn-primary-text', 'color-btn-primary-hover', 'color-btn-secondary-bg', 'color-btn-secondary-text', 'color-btn-secondary-hover'],
-      };
+      const system = getColorSystem(systemId, primary, secondary);
+      const colors = system.colors;
+      const groups = system.groups;
 
       // Render palette
       const paletteEl = document.getElementById('palette');
@@ -545,66 +712,40 @@
       }
 
       // Store colors for CSS export
-      window.generatedColors = colors;
+      window.generatedColors = { colors, groups };
     }
 
     // Copy all CSS
     function copyAllCSS() {
       const primary = document.getElementById('primaryHex').value.toUpperCase();
       const secondary = document.getElementById('secondaryHex').value.toUpperCase();
-      const colors = window.generatedColors;
+      const systemId = document.getElementById('colorSystem').value;
+      const systemName = document.getElementById('colorSystem').selectedOptions[0].text;
+      const data = window.generatedColors;
 
-      if (!colors) return;
+      if (!data) return;
 
-      const css = `/* Generated Color Palette */
-/* Primary: ${primary} | Secondary: ${secondary} */
+      const { colors, groups } = data;
 
-:root {
-  /* Base Colors */
-  --color-primary: ${colors['color-primary'].value};
-  --color-secondary: ${colors['color-secondary'].value};
+      let cssLines = [];
+      cssLines.push(`/* Generated Color Palette */`);
+      cssLines.push(`/* System: ${systemName} */`);
+      cssLines.push(`/* Primary: ${primary} | Secondary: ${secondary} */`);
+      cssLines.push(``);
+      cssLines.push(`:root {`);
 
-  /* Primary Shades */
-  --color-primary-50: ${colors['color-primary-50'].value};
-  --color-primary-100: ${colors['color-primary-100'].value};
-  --color-primary-200: ${colors['color-primary-200'].value};
-  --color-primary-600: ${colors['color-primary-600'].value};
-  --color-primary-700: ${colors['color-primary-700'].value};
-  --color-primary-800: ${colors['color-primary-800'].value};
-  --color-primary-900: ${colors['color-primary-900'].value};
-  --color-primary-950: ${colors['color-primary-950'].value};
+      for (const [groupName, colorNames] of Object.entries(groups)) {
+        cssLines.push(`  /* ${groupName} */`);
+        for (const name of colorNames) {
+          const color = colors[name];
+          cssLines.push(`  --${name}: ${color.value};`);
+        }
+        cssLines.push(``);
+      }
 
-  /* Secondary Shades */
-  --color-secondary-50: ${colors['color-secondary-50'].value};
-  --color-secondary-100: ${colors['color-secondary-100'].value};
-  --color-secondary-600: ${colors['color-secondary-600'].value};
-  --color-secondary-700: ${colors['color-secondary-700'].value};
+      cssLines.push(`}`);
 
-  /* Text Colors */
-  --color-text: ${colors['color-text'].value};
-  --color-text-75: ${colors['color-text-75'].value};
-  --color-text-secondary: ${colors['color-text-secondary'].value};
-  --color-text-muted: ${colors['color-text-muted'].value};
-
-  /* Background Colors */
-  --color-background: ${colors['color-background'].value};
-  --color-surface: ${colors['color-surface'].value};
-  --bg-grey-lighter: ${colors['bg-grey-lighter'].value};
-  --bg-grey-light: ${colors['bg-grey-light'].value};
-
-  /* Border Colors */
-  --color-border: ${colors['color-border'].value};
-  --color-border-light: ${colors['color-border-light'].value};
-
-  /* Button Colors */
-  --color-btn-primary-bg: ${colors['color-btn-primary-bg'].value};
-  --color-btn-primary-text: ${colors['color-btn-primary-text'].value};
-  --color-btn-primary-hover: ${colors['color-btn-primary-hover'].value};
-  --color-btn-secondary-bg: ${colors['color-btn-secondary-bg'].value};
-  --color-btn-secondary-text: ${colors['color-btn-secondary-text'].value};
-  --color-btn-secondary-hover: ${colors['color-btn-secondary-hover'].value};
-}`;
-
+      const css = cssLines.join('\n');
       copyToClipboard(css, 'All CSS variables copied!');
     }
 
