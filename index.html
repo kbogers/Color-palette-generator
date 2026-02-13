@@ -406,6 +406,9 @@
           <button type="button" class="btn btn-secondary" onclick="copyAllCSS()">
             Copy All CSS Variables
           </button>
+          <button type="button" class="btn btn-secondary" onclick="exportTokenStudioJSON()">
+            Export Token Studio JSON
+          </button>
         </div>
       </aside>
 
@@ -719,7 +722,6 @@
     function copyAllCSS() {
       const primary = document.getElementById('primaryHex').value.toUpperCase();
       const secondary = document.getElementById('secondaryHex').value.toUpperCase();
-      const systemId = document.getElementById('colorSystem').value;
       const systemName = document.getElementById('colorSystem').selectedOptions[0].text;
       const data = window.generatedColors;
 
@@ -747,6 +749,76 @@
 
       const css = cssLines.join('\n');
       copyToClipboard(css, 'All CSS variables copied!');
+    }
+
+    function toTokenStudioPath(groupName) {
+      return groupName
+        .replace(/[^a-zA-Z0-9]+/g, '/')
+        .replace(/\/+/g, '/')
+        .replace(/^\/|\/$/g, '')
+        .toLowerCase();
+    }
+
+    function setNestedToken(target, pathSegments, tokenName, tokenValue) {
+      let current = target;
+      for (const segment of pathSegments) {
+        if (!current[segment]) current[segment] = {};
+        current = current[segment];
+      }
+      current[tokenName] = tokenValue;
+    }
+
+    function buildTokenStudioJSON(data) {
+      const tokens = {};
+
+      for (const [groupName, colorNames] of Object.entries(data.groups)) {
+        const pathSegments = toTokenStudioPath(groupName).split('/').filter(Boolean);
+        for (const name of colorNames) {
+          const color = data.colors[name];
+          if (!color) continue;
+          setNestedToken(tokens, pathSegments, name, {
+            value: color.value,
+            type: 'color'
+          });
+        }
+      }
+
+      return {
+        global: tokens,
+        $metadata: {
+          tokenSetOrder: ['global']
+        }
+      };
+    }
+
+    function downloadJSONFile(fileName, data) {
+      const json = JSON.stringify(data, null, 2);
+      const blob = new Blob([json], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = fileName;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+    }
+
+    function exportTokenStudioJSON() {
+      if (!window.generatedColors) generatePalette();
+      if (!window.generatedColors) return;
+
+      const systemId = document.getElementById('colorSystem').value;
+      const systemName = document.getElementById('colorSystem').selectedOptions[0].text;
+      const payload = buildTokenStudioJSON(window.generatedColors);
+      const safeSystemName = systemName
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, '-')
+        .replace(/^-+|-+$/g, '');
+      const fileName = `tokens-studio-${safeSystemName || systemId}.json`;
+
+      downloadJSONFile(fileName, payload);
+      showToast('Token Studio JSON exported!');
     }
 
     // Event listeners
