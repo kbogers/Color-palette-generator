@@ -399,15 +399,23 @@
           </div>
         </div>
 
+        <div class="input-group">
+          <label class="input-label">Export Format</label>
+          <div class="select-wrapper">
+            <select id="exportFormat" class="select-input">
+              <option value="css">CSS Variables (copy to clipboard)</option>
+              <option value="token-studio">Token Studio JSON</option>
+              <option value="figma-variables">Figma Variables JSON</option>
+            </select>
+          </div>
+        </div>
+
         <div class="btn-group">
           <button type="button" class="btn btn-primary" onclick="generatePalette()">
             Generate Palette
           </button>
-          <button type="button" class="btn btn-secondary" onclick="copyAllCSS()">
-            Copy All CSS Variables
-          </button>
-          <button type="button" class="btn btn-secondary" onclick="exportTokenStudioJSON()">
-            Export Token Studio JSON
+          <button type="button" class="btn btn-secondary" onclick="exportPalette()">
+            Export
           </button>
         </div>
       </aside>
@@ -819,6 +827,81 @@
 
       downloadJSONFile(fileName, payload);
       showToast('Token Studio JSON exported!');
+    }
+
+    function hexToSrgbComponents(hex) {
+      const rgb = hexToRgb(hex);
+      if (!rgb) return [0, 0, 0];
+      return [rgb.r / 255, rgb.g / 255, rgb.b / 255];
+    }
+
+    function buildFigmaVariablesJSON(data) {
+      const tokens = {};
+      let variableIdCounter = 1;
+
+      for (const [groupName, colorNames] of Object.entries(data.groups)) {
+        const pathSegments = toTokenStudioPath(groupName).split('/').filter(Boolean);
+        for (const name of colorNames) {
+          const color = data.colors[name];
+          if (!color) continue;
+
+          setNestedToken(tokens, pathSegments, name, {
+            $type: 'color',
+            $value: {
+              colorSpace: 'srgb',
+              components: hexToSrgbComponents(color.value),
+              alpha: 1,
+              hex: color.value
+            },
+            $extensions: {
+              'com.figma.variableId': `VariableID:${variableIdCounter}:1`,
+              'com.figma.scopes': ['ALL_SCOPES'],
+              'com.figma.isOverride': true
+            }
+          });
+          variableIdCounter += 1;
+        }
+      }
+
+      return {
+        ...tokens,
+        $extensions: {
+          'com.figma.modeName': 'Mode 1'
+        }
+      };
+    }
+
+    function exportFigmaVariablesJSON() {
+      if (!window.generatedColors) generatePalette();
+      if (!window.generatedColors) return;
+
+      const systemId = document.getElementById('colorSystem').value;
+      const systemName = document.getElementById('colorSystem').selectedOptions[0].text;
+      const payload = buildFigmaVariablesJSON(window.generatedColors);
+      const safeSystemName = systemName
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, '-')
+        .replace(/^-+|-+$/g, '');
+      const fileName = `figma-variables-${safeSystemName || systemId}.json`;
+
+      downloadJSONFile(fileName, payload);
+      showToast('Figma Variables JSON exported!');
+    }
+
+    function exportPalette() {
+      const format = document.getElementById('exportFormat').value;
+
+      if (format === 'css') {
+        copyAllCSS();
+        return;
+      }
+      if (format === 'token-studio') {
+        exportTokenStudioJSON();
+        return;
+      }
+      if (format === 'figma-variables') {
+        exportFigmaVariablesJSON();
+      }
     }
 
     // Event listeners
