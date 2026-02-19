@@ -8,6 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
   <style>
     * {
       margin: 0;
@@ -45,16 +46,105 @@
       margin-bottom: 48px;
     }
 
+    .header-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 8px;
+    }
+
     h1 {
       font-size: 24px;
       font-weight: 600;
       letter-spacing: -0.02em;
-      margin-bottom: 8px;
+      margin: 0;
     }
 
     .subtitle {
       color: var(--text-secondary);
       font-size: 14px;
+    }
+
+    .toolbar {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .toolbar-btn {
+      position: relative;
+      width: 40px;
+      height: 40px;
+      border: none;
+      background: transparent;
+      border-radius: var(--radius);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text-secondary);
+      transition: all 0.15s ease;
+      padding: 0;
+    }
+
+    .toolbar-btn:hover {
+      background: var(--bg-hover);
+      color: var(--text-primary);
+    }
+
+    .toolbar-btn:active {
+      background: var(--border-light);
+    }
+
+    .toolbar-btn .material-icons {
+      font-size: 20px;
+    }
+
+    .toolbar-btn[disabled] {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+
+    .toolbar-btn[disabled]:hover {
+      background: transparent;
+      color: var(--text-secondary);
+    }
+
+    .tooltip {
+      position: absolute;
+      bottom: 100%;
+      left: 50%;
+      transform: translateX(-50%) translateY(-8px);
+      background: var(--text-primary);
+      color: white;
+      padding: 6px 10px;
+      border-radius: 4px;
+      font-size: 12px;
+      font-weight: 500;
+      white-space: nowrap;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.15s ease, transform 0.15s ease;
+      z-index: 1000;
+      margin-bottom: 4px;
+    }
+
+    .tooltip::after {
+      content: '';
+      position: absolute;
+      top: 100%;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 0;
+      height: 0;
+      border-left: 4px solid transparent;
+      border-right: 4px solid transparent;
+      border-top: 4px solid var(--text-primary);
+    }
+
+    .toolbar-btn:hover .tooltip {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
     }
 
     .layout {
@@ -341,6 +431,330 @@
       opacity: 1;
     }
 
+    /* Cookie Banner */
+    .cookie-banner {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: var(--bg);
+      border-top: 1px solid var(--border);
+      padding: 20px 24px;
+      box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.05);
+      z-index: 1001;
+      transform: translateY(100%);
+      transition: transform 0.3s ease;
+    }
+
+    .cookie-banner.show {
+      transform: translateY(0);
+    }
+
+    .cookie-banner-content {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+      flex-wrap: wrap;
+    }
+
+    .cookie-banner-text {
+      flex: 1;
+      min-width: 300px;
+    }
+
+    .cookie-banner-message {
+      font-size: 13px;
+      color: var(--text-secondary);
+      line-height: 1.5;
+    }
+
+    .cookie-banner-actions {
+      display: flex;
+      gap: 12px;
+      flex-shrink: 0;
+    }
+
+    .cookie-banner-btn {
+      padding: 10px 20px;
+      border-radius: var(--radius);
+      font-family: inherit;
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      border: none;
+    }
+
+    .cookie-banner-btn-accept {
+      background: var(--text-primary);
+      color: white;
+    }
+
+    .cookie-banner-btn-accept:hover {
+      opacity: 0.85;
+    }
+
+    .cookie-banner-btn-decline {
+      background: transparent;
+      color: var(--text-primary);
+      border: 1px solid var(--border);
+    }
+
+    .cookie-banner-btn-decline:hover {
+      background: var(--bg-hover);
+    }
+
+    /* Saved Schemes Modal */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.5);
+      z-index: 2000;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+
+    .modal-overlay.show {
+      display: flex;
+    }
+
+    .modal {
+      background: var(--bg);
+      border-radius: var(--radius-lg);
+      padding: 24px;
+      max-width: 500px;
+      width: 100%;
+      max-height: 80vh;
+      overflow-y: auto;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+    }
+
+    .modal-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 20px;
+    }
+
+    .modal-title {
+      font-size: 18px;
+      font-weight: 600;
+    }
+
+    .modal-close {
+      background: none;
+      border: none;
+      font-size: 24px;
+      color: var(--text-muted);
+      cursor: pointer;
+      padding: 0;
+      width: 32px;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: var(--radius);
+      transition: all 0.15s ease;
+    }
+
+    .modal-close:hover {
+      background: var(--bg-hover);
+      color: var(--text-primary);
+    }
+
+    .saved-schemes-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .saved-scheme-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      transition: all 0.15s ease;
+    }
+
+    .saved-scheme-item:hover {
+      background: var(--bg-hover);
+      border-color: var(--text-muted);
+    }
+
+    .saved-scheme-info {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex: 1;
+    }
+
+    .saved-scheme-colors {
+      display: flex;
+      gap: 4px;
+    }
+
+    .saved-scheme-color {
+      width: 24px;
+      height: 24px;
+      border-radius: 4px;
+      border: 1px solid rgba(0, 0, 0, 0.1);
+    }
+
+    .saved-scheme-details {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .saved-scheme-name {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text-primary);
+    }
+
+    .saved-scheme-meta {
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    .saved-scheme-actions {
+      display: flex;
+      gap: 8px;
+    }
+
+    .saved-scheme-btn {
+      padding: 6px 12px;
+      border-radius: var(--radius);
+      font-size: 12px;
+      font-weight: 500;
+      cursor: pointer;
+      border: none;
+      transition: all 0.15s ease;
+    }
+
+    .saved-scheme-btn-load {
+      background: var(--text-primary);
+      color: white;
+    }
+
+    .saved-scheme-btn-load:hover {
+      opacity: 0.85;
+    }
+
+    .saved-scheme-btn-delete {
+      background: transparent;
+      color: var(--text-muted);
+      border: 1px solid var(--border);
+    }
+
+    .saved-scheme-btn-delete:hover {
+      background: var(--bg-hover);
+      color: var(--text-primary);
+      border-color: var(--text-muted);
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 40px 20px;
+      color: var(--text-muted);
+      font-size: 14px;
+    }
+
+    /* Export Modal */
+    .export-options {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    .export-option {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .export-option:hover {
+      background: var(--bg-hover);
+      border-color: var(--text-muted);
+    }
+
+    .export-option input[type="radio"] {
+      width: 18px;
+      height: 18px;
+      cursor: pointer;
+      accent-color: var(--text-primary);
+    }
+
+    .export-option-label {
+      flex: 1;
+      cursor: pointer;
+    }
+
+    .export-option-title {
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--text-primary);
+      margin-bottom: 2px;
+    }
+
+    .export-option-description {
+      font-size: 12px;
+      color: var(--text-secondary);
+    }
+
+    .modal-actions {
+      display: flex;
+      gap: 12px;
+      justify-content: flex-end;
+    }
+
+    .modal-btn {
+      padding: 10px 20px;
+      border-radius: var(--radius);
+      font-family: inherit;
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      border: none;
+    }
+
+    .modal-btn-primary {
+      background: var(--text-primary);
+      color: white;
+    }
+
+    .modal-btn-primary:hover {
+      opacity: 0.85;
+    }
+
+    .modal-btn-secondary {
+      background: transparent;
+      color: var(--text-primary);
+      border: 1px solid var(--border);
+    }
+
+    .modal-btn-secondary:hover {
+      background: var(--bg-hover);
+      border-color: var(--text-muted);
+    }
+
     /* Scrollbar */
     ::-webkit-scrollbar {
       width: 8px;
@@ -364,7 +778,23 @@
 <body>
   <div class="container">
     <header>
-      <h1>Color Palette Generator</h1>
+      <div class="header-top">
+        <h1>Color Palette Generator</h1>
+        <div class="toolbar">
+          <button type="button" class="toolbar-btn" onclick="exportPalette()" title="Export palette">
+            <span class="material-icons">download</span>
+            <span class="tooltip">Export</span>
+          </button>
+          <button type="button" id="saveSchemeBtn" class="toolbar-btn" onclick="saveColorScheme()" title="Save color scheme" style="display: none;">
+            <span class="material-icons">save</span>
+            <span class="tooltip">Save Scheme</span>
+          </button>
+          <button type="button" id="loadSavedBtn" class="toolbar-btn" onclick="showSavedSchemes()" title="Load saved schemes" style="display: none;">
+            <span class="material-icons">folder_open</span>
+            <span class="tooltip">Load Saved</span>
+          </button>
+        </div>
+      </div>
       <p class="subtitle">Generate a complete color system from two brand colors</p>
     </header>
 
@@ -399,23 +829,9 @@
           </div>
         </div>
 
-        <div class="input-group">
-          <label class="input-label">Export Format</label>
-          <div class="select-wrapper">
-            <select id="exportFormat" class="select-input">
-              <option value="css">CSS Variables (copy to clipboard)</option>
-              <option value="token-studio">Token Studio JSON</option>
-              <option value="figma-variables">Figma Variables JSON</option>
-            </select>
-          </div>
-        </div>
-
         <div class="btn-group">
           <button type="button" class="btn btn-primary" onclick="generatePalette()">
             Generate Palette
-          </button>
-          <button type="button" class="btn btn-secondary" onclick="exportPalette()">
-            Export
           </button>
         </div>
       </aside>
@@ -427,6 +843,71 @@
   </div>
 
   <div class="toast" id="toast">Copied!</div>
+
+  <!-- Cookie Banner -->
+  <div class="cookie-banner" id="cookieBanner">
+    <div class="cookie-banner-content">
+      <div class="cookie-banner-text">
+        <div class="cookie-banner-message">
+          We use cookies to be able to store your color schemes. If you reject cookies we will disable this functionality.
+        </div>
+      </div>
+      <div class="cookie-banner-actions">
+        <button class="cookie-banner-btn cookie-banner-btn-decline" onclick="declineCookies()">Reject</button>
+        <button class="cookie-banner-btn cookie-banner-btn-accept" onclick="acceptCookies()">Accept</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Export Modal -->
+  <div class="modal-overlay" id="exportModal" onclick="closeModalOnOverlay(event, 'exportModal')">
+    <div class="modal" onclick="event.stopPropagation()">
+      <div class="modal-header">
+        <h2 class="modal-title">Export Palette</h2>
+        <button class="modal-close" onclick="closeExportModal()">&times;</button>
+      </div>
+      <div class="export-options">
+        <label class="export-option" onclick="selectExportFormat('css')">
+          <input type="radio" name="exportFormat" value="css" checked>
+          <div class="export-option-label">
+            <div class="export-option-title">CSS Variables</div>
+            <div class="export-option-description">Copy CSS custom properties to clipboard</div>
+          </div>
+        </label>
+        <label class="export-option" onclick="selectExportFormat('token-studio')">
+          <input type="radio" name="exportFormat" value="token-studio">
+          <div class="export-option-label">
+            <div class="export-option-title">Token Studio JSON</div>
+            <div class="export-option-description">Download JSON file for Token Studio import</div>
+          </div>
+        </label>
+        <label class="export-option" onclick="selectExportFormat('figma-variables')">
+          <input type="radio" name="exportFormat" value="figma-variables">
+          <div class="export-option-label">
+            <div class="export-option-title">Figma Variables JSON</div>
+            <div class="export-option-description">Download JSON file for Figma Variables import</div>
+          </div>
+        </label>
+      </div>
+      <div class="modal-actions">
+        <button class="modal-btn modal-btn-secondary" onclick="closeExportModal()">Cancel</button>
+        <button class="modal-btn modal-btn-primary" onclick="confirmExport()">Export</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Saved Schemes Modal -->
+  <div class="modal-overlay" id="savedSchemesModal" onclick="closeModalOnOverlay(event, 'savedSchemesModal')">
+    <div class="modal" onclick="event.stopPropagation()">
+      <div class="modal-header">
+        <h2 class="modal-title">Saved Color Schemes</h2>
+        <button class="modal-close" onclick="closeSavedSchemesModal()">&times;</button>
+      </div>
+      <div class="saved-schemes-list" id="savedSchemesList">
+        <!-- Saved schemes will be rendered here -->
+      </div>
+    </div>
+  </div>
 
   <script>
     // Color utility functions
@@ -505,6 +986,7 @@
             'color-secondary-600': { value: mixColors(secondary, BLACK, 0.90), formula: '90% secondary + 10% black' },
             'color-secondary-700': { value: mixColors(secondary, BLACK, 0.80), formula: '80% secondary + 20% black' },
             'color-text': { value: mixColors(primary, '#1a1a1a', 0.08), formula: '8% primary + 92% #1a1a1a' },
+            'color-text-85': { value: mixColors(mixColors(primary, '#1a1a1a', 0.08), WHITE, 0.85), formula: '85% text + 15% white' },
             'color-text-75': { value: mixColors(mixColors(primary, '#1a1a1a', 0.08), WHITE, 0.75), formula: '75% text + 25% white' },
             'color-text-secondary': { value: mixColors(primary, '#666666', 0.06), formula: '6% primary + 94% #666666' },
             'color-text-muted': { value: mixColors(primary, '#999999', 0.04), formula: '4% primary + 96% #999999' },
@@ -525,7 +1007,7 @@
             'Base Colors': ['color-primary', 'color-secondary'],
             'Primary Shades': ['color-primary-50', 'color-primary-100', 'color-primary-200', 'color-primary-600', 'color-primary-700', 'color-primary-800', 'color-primary-900', 'color-primary-950'],
             'Secondary Shades': ['color-secondary-50', 'color-secondary-100', 'color-secondary-600', 'color-secondary-700'],
-            'Text Colors': ['color-text', 'color-text-75', 'color-text-secondary', 'color-text-muted'],
+            'Text Colors': ['color-text', 'color-text-85', 'color-text-75', 'color-text-secondary', 'color-text-muted'],
             'Background Colors': ['color-background', 'color-surface', 'bg-grey-lighter', 'bg-grey-light'],
             'Border Colors': ['color-border', 'color-border-light'],
             'Button Colors': ['color-btn-primary-bg', 'color-btn-primary-text', 'color-btn-primary-hover', 'color-btn-secondary-bg', 'color-btn-secondary-text', 'color-btn-secondary-hover'],
@@ -889,7 +1371,21 @@
     }
 
     function exportPalette() {
-      const format = document.getElementById('exportFormat').value;
+      document.getElementById('exportModal').classList.add('show');
+    }
+
+    function selectExportFormat(format) {
+      const radio = document.querySelector(`input[name="exportFormat"][value="${format}"]`);
+      if (radio) {
+        radio.checked = true;
+      }
+    }
+
+    function confirmExport() {
+      const format = document.querySelector('input[name="exportFormat"]:checked')?.value;
+      if (!format) return;
+
+      closeExportModal();
 
       if (format === 'css') {
         copyAllCSS();
@@ -902,6 +1398,10 @@
       if (format === 'figma-variables') {
         exportFigmaVariablesJSON();
       }
+    }
+
+    function closeExportModal() {
+      document.getElementById('exportModal').classList.remove('show');
     }
 
     // Event listeners
@@ -955,8 +1455,233 @@
       }
     });
 
+    // LocalStorage functions for saving color schemes
+    const STORAGE_KEY = 'colorPaletteSchemes';
+    const COOKIE_CONSENT_KEY = 'colorPaletteCookieConsent';
+
+    function getSavedSchemes() {
+      if (!hasCookieConsent()) return [];
+      try {
+        const saved = localStorage.getItem(STORAGE_KEY);
+        return saved ? JSON.parse(saved) : [];
+      } catch (e) {
+        console.error('Error loading saved schemes:', e);
+        return [];
+      }
+    }
+
+    function saveSchemeToStorage(scheme) {
+      if (!hasCookieConsent()) {
+        showCookieBanner();
+        showToast('Please accept cookies to save color schemes');
+        return false;
+      }
+      try {
+        const schemes = getSavedSchemes();
+        schemes.push(scheme);
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(schemes));
+        return true;
+      } catch (e) {
+        console.error('Error saving scheme:', e);
+        showToast('Error saving scheme');
+        return false;
+      }
+    }
+
+    function deleteSchemeFromStorage(index) {
+      if (!hasCookieConsent()) return false;
+      try {
+        const schemes = getSavedSchemes();
+        schemes.splice(index, 1);
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(schemes));
+        return true;
+      } catch (e) {
+        console.error('Error deleting scheme:', e);
+        return false;
+      }
+    }
+
+    function saveColorScheme() {
+      const primary = document.getElementById('primaryHex').value.toUpperCase();
+      const secondary = document.getElementById('secondaryHex').value.toUpperCase();
+      const systemId = document.getElementById('colorSystem').value;
+      const systemName = document.getElementById('colorSystem').selectedOptions[0].text;
+
+      if (!isValidHex(primary) || !isValidHex(secondary)) {
+        showToast('Please enter valid hex colors');
+        return;
+      }
+
+      const schemeName = prompt('Enter a name for this color scheme:');
+      if (!schemeName || !schemeName.trim()) {
+        return;
+      }
+
+      const scheme = {
+        name: schemeName.trim(),
+        primary,
+        secondary,
+        systemId,
+        systemName,
+        savedAt: new Date().toISOString()
+      };
+
+      if (saveSchemeToStorage(scheme)) {
+        showToast('Color scheme saved!');
+      }
+    }
+
+    function loadColorScheme(scheme) {
+      document.getElementById('primaryHex').value = scheme.primary;
+      document.getElementById('primaryPicker').value = scheme.primary;
+      document.getElementById('secondaryHex').value = scheme.secondary;
+      document.getElementById('secondaryPicker').value = scheme.secondary;
+      document.getElementById('colorSystem').value = scheme.systemId;
+      generatePalette();
+      closeSavedSchemesModal();
+      showToast('Color scheme loaded!');
+    }
+
+    function showSavedSchemes() {
+      if (!hasCookieConsent()) {
+        showCookieBanner();
+        showToast('Please accept cookies to view saved schemes');
+        return;
+      }
+
+      const schemes = getSavedSchemes();
+      const listEl = document.getElementById('savedSchemesList');
+      const modal = document.getElementById('savedSchemesModal');
+
+      if (schemes.length === 0) {
+        listEl.innerHTML = '<div class="empty-state">No saved color schemes yet. Save a scheme to see it here.</div>';
+      } else {
+        listEl.innerHTML = schemes.map((scheme, index) => {
+          const date = new Date(scheme.savedAt);
+          const dateStr = date.toLocaleDateString() + ' ' + date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+          return `
+            <div class="saved-scheme-item">
+              <div class="saved-scheme-info">
+                <div class="saved-scheme-colors">
+                  <div class="saved-scheme-color" style="background-color: ${scheme.primary}"></div>
+                  <div class="saved-scheme-color" style="background-color: ${scheme.secondary}"></div>
+                </div>
+                <div class="saved-scheme-details">
+                  <div class="saved-scheme-name">${escapeHtml(scheme.name)}</div>
+                  <div class="saved-scheme-meta">${escapeHtml(scheme.systemName)} • ${dateStr}</div>
+                </div>
+              </div>
+              <div class="saved-scheme-actions">
+                <button class="saved-scheme-btn saved-scheme-btn-load" onclick="loadColorSchemeByIndex(${index})">Load</button>
+                <button class="saved-scheme-btn saved-scheme-btn-delete" onclick="deleteSavedScheme(${index})">Delete</button>
+              </div>
+            </div>
+          `;
+        }).join('');
+      }
+
+      modal.classList.add('show');
+    }
+
+    function loadColorSchemeByIndex(index) {
+      const schemes = getSavedSchemes();
+      if (schemes[index]) {
+        loadColorScheme(schemes[index]);
+      }
+    }
+
+    function closeSavedSchemesModal() {
+      document.getElementById('savedSchemesModal').classList.remove('show');
+    }
+
+    function closeModalOnOverlay(event, modalId) {
+      if (event.target.id === modalId) {
+        if (modalId === 'savedSchemesModal') {
+          closeSavedSchemesModal();
+        } else if (modalId === 'exportModal') {
+          closeExportModal();
+        }
+      }
+    }
+
+    function deleteSavedScheme(index) {
+      if (confirm('Are you sure you want to delete this color scheme?')) {
+        if (deleteSchemeFromStorage(index)) {
+          showSavedSchemes();
+          showToast('Color scheme deleted');
+        }
+      }
+    }
+
+    function escapeHtml(text) {
+      const div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML;
+    }
+
+    // Cookie consent functions
+    function hasCookieConsent() {
+      return localStorage.getItem(COOKIE_CONSENT_KEY) === 'accepted';
+    }
+
+    function updateSaveLoadButtonsVisibility() {
+      const saveBtn = document.getElementById('saveSchemeBtn');
+      const loadBtn = document.getElementById('loadSavedBtn');
+      const hasConsent = hasCookieConsent();
+      
+      if (saveBtn) {
+        saveBtn.style.display = hasConsent ? 'flex' : 'none';
+      }
+      if (loadBtn) {
+        loadBtn.style.display = hasConsent ? 'flex' : 'none';
+      }
+    }
+
+    function showCookieBanner() {
+      if (!hasCookieConsent()) {
+        document.getElementById('cookieBanner').classList.add('show');
+      }
+    }
+
+    function acceptCookies() {
+      localStorage.setItem(COOKIE_CONSENT_KEY, 'accepted');
+      document.getElementById('cookieBanner').classList.remove('show');
+      updateSaveLoadButtonsVisibility();
+      showToast('Cookie preferences saved');
+    }
+
+    function declineCookies() {
+      localStorage.setItem(COOKIE_CONSENT_KEY, 'declined');
+      document.getElementById('cookieBanner').classList.remove('show');
+      // Clear any existing saved schemes if user declines
+      localStorage.removeItem(STORAGE_KEY);
+      updateSaveLoadButtonsVisibility();
+      showToast('Local storage disabled. Saved schemes cleared.');
+    }
+
+    // Load saved color scheme on page load if available
+    function loadLastUsedScheme() {
+      if (!hasCookieConsent()) return;
+      
+      const schemes = getSavedSchemes();
+      if (schemes.length > 0) {
+        // Optionally load the most recently saved scheme
+        // Uncomment the line below if you want to auto-load the last saved scheme
+        // loadColorScheme(schemes[schemes.length - 1]);
+      }
+    }
+
+    // Update button visibility based on cookie consent
+    updateSaveLoadButtonsVisibility();
+
+    // Show cookie banner on first visit
+    if (!hasCookieConsent()) {
+      setTimeout(() => showCookieBanner(), 500);
+    }
+
     // Initial generation
     generatePalette();
+    loadLastUsedScheme();
   </script>
 </body>
 </html>
